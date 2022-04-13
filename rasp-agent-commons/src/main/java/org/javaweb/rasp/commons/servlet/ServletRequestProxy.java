@@ -41,4 +41,6 @@ public interface ServletRequestProxy {
 
 	String getLocalAddr();
 
+	int getContentLength();
+
 }

@@ -1,9 +1,11 @@
 package org.javaweb.rasp.commons.cache;
 
+import org.javaweb.rasp.commons.context.RASPHttpRequestContext;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import static org.javaweb.rasp.commons.utils.IOUtils.closeQuietly;
 
 /**
  * RASP 缓存请求对象封装,缓存请求中的各种参数信息
@@ -23,6 +25,11 @@ public class RASPCachedRequest {
 	private RASPOutputStreamCache outputStreamCache;
 
 	/**
+	 * 缓存的XML，只有请求类型为application/xml时候才会缓存
+	 */
+	private String cachedXML;
+
+	/**
 	 * 输出对象，可能是Writer或者OutputStream
 	 */
 	private Object output;
@@ -35,7 +42,11 @@ public class RASPCachedRequest {
 	/**
 	 * RASP Http的参数缓存
 	 */
-	private final Set<RASPCachedParameter> raspCachedParameterList = new HashSet<RASPCachedParameter>();
+	private final RASPParameterSet<RASPCachedParameter> raspCachedParameterList;
+
+	public RASPCachedRequest(RASPHttpRequestContext context) {
+		raspCachedParameterList = new RASPParameterSet<RASPCachedParameter>(context);
+	}
 
 //	/**
 //	 * 解析queryString的参数，因为JEECMS会自己解析，而不是request.getParameter导致参数丢失
@@ -63,15 +74,6 @@ public class RASPCachedRequest {
 //	}
 
 	/**
-	 * 缓存被调用过的Http请求参数键
-	 *
-	 * @param parameter 缓存参数
-	 */
-	public void cacheRequestParameter(RASPCachedParameter parameter) {
-		raspCachedParameterList.add(parameter);
-	}
-
-	/**
 	 * 缓存SQL查询语句,用于避免SQL重复验证问题
 	 *
 	 * @param hashcode SQL hashcode
@@ -89,7 +91,7 @@ public class RASPCachedRequest {
 	 *
 	 * @return 返回缓存在RASP上下文中的所有参数
 	 */
-	public Set<RASPCachedParameter> getCachedParameter() {
+	public RASPParameterSet<RASPCachedParameter> getCachedParameter() {
 		return raspCachedParameterList;
 	}
 
@@ -115,6 +117,29 @@ public class RASPCachedRequest {
 
 	public void setOutput(Object output) {
 		this.output = output;
+	}
+
+	public String getCachedXML() {
+		return cachedXML;
+	}
+
+	public void cacheRequestXMLData(RASPByteArrayInputStream in) {
+		this.cachedXML = new String(in.getBuf());
+	}
+
+	/**
+	 * 关闭RASP请求缓存对象，同时清除缓存数据
+	 */
+	public void close() {
+		if (inputStreamCache != null)
+			closeQuietly(inputStreamCache);
+
+		if (outputStreamCache != null)
+			closeQuietly(outputStreamCache);
+
+		this.cachedXML = null;
+		this.sqlHashCodes.clear();
+		this.raspCachedParameterList.clear();
 	}
 
 }

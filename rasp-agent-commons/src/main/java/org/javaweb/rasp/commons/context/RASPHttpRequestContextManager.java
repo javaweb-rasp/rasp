@@ -1,5 +1,7 @@
 package org.javaweb.rasp.commons.context;
 
+import java.io.IOException;
+
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_LOGGER;
 import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
 
@@ -20,10 +22,6 @@ public abstract class RASPHttpRequestContextManager {
 	}
 
 	public static void setContext(RASPHttpRequestContext context) {
-		if (getContext() != null) {
-			throw new RuntimeException(AGENT_NAME + " Context已创建！");
-		}
-
 		RASP_CONTEXT.set(context);
 
 		if (AGENT_LOGGER.isDebugEnabled()) {
@@ -44,6 +42,12 @@ public abstract class RASPHttpRequestContextManager {
 		}
 
 		RASP_CONTEXT.remove();
+
+		try {
+			context.close();
+		} catch (IOException e) {
+			AGENT_LOGGER.info("{}关闭RASP上下文时异常：" + e, AGENT_NAME);
+		}
 	}
 
 	/**
@@ -54,16 +58,6 @@ public abstract class RASPHttpRequestContextManager {
 	public static boolean hasRequestContext() {
 		RASPHttpRequestContext context = getContext();
 
-		return hasRequestContext(context);
-	}
-
-	/**
-	 * 检测当前线程中是否存在HTTP请求
-	 *
-	 * @param context RASP上下文
-	 * @return 是否存在HTTP请求
-	 */
-	public static boolean hasRequestContext(RASPHttpRequestContext context) {
 		return context != null && context.getServletRequest() != null && context.getServletResponse() != null;
 	}
 

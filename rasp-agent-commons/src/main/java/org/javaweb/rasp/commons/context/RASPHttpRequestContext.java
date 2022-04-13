@@ -1,7 +1,6 @@
 package org.javaweb.rasp.commons.context;
 
 import org.javaweb.rasp.commons.MethodHookEvent;
-import org.javaweb.rasp.commons.RASPModuleType;
 import org.javaweb.rasp.commons.attack.RASPAttackInfo;
 import org.javaweb.rasp.commons.cache.RASPCachedRequest;
 import org.javaweb.rasp.commons.config.RASPAppProperties;
@@ -10,7 +9,10 @@ import org.javaweb.rasp.commons.servlet.HttpServletRequestProxy;
 import org.javaweb.rasp.commons.servlet.HttpServletResponseProxy;
 import org.slf4j.Logger;
 
+import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
+import java.rasp.proxy.loader.RASPModuleType;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -23,7 +25,7 @@ import static org.javaweb.rasp.commons.utils.URLUtils.getStandardContextPath;
 /**
  * HttpRequest上下文
  */
-public abstract class RASPHttpRequestContext {
+public abstract class RASPHttpRequestContext implements Closeable {
 
 	/**
 	 * RASP 应用配置对象
@@ -130,7 +132,7 @@ public abstract class RASPHttpRequestContext {
 		this.servletResponse = response;
 		this.requestStartNanoTime = nanoTime();
 		this.cacheClass = event.getThisObject();
-		this.cachedRequest = new RASPCachedRequest();
+		this.cachedRequest = new RASPCachedRequest(this);
 		this.adapterClassLoader = adapterClassLoader;
 		this.servletPath = request.getServletPath();
 		this.userAgent = request.getHeader("User-Agent");
@@ -356,7 +358,7 @@ public abstract class RASPHttpRequestContext {
 	 *
 	 * @return 是否是Web API请求
 	 */
-	public abstract boolean isWebAPIRequest();
+	public abstract boolean isWebApiRequest();
 
 	/**
 	 * 返回是否是访问的jsp动态脚本文件
@@ -387,6 +389,13 @@ public abstract class RASPHttpRequestContext {
 	public abstract boolean isXmlRequest();
 
 	/**
+	 * 获取ContentLength
+	 *
+	 * @return ContentLength
+	 */
+	public abstract int getContentLength();
+
+	/**
 	 * 设置反序列化
 	 */
 	public abstract void setDeserializationStatus();
@@ -397,5 +406,10 @@ public abstract class RASPHttpRequestContext {
 	 * @return 是否反序列化
 	 */
 	public abstract boolean isDeserialization();
+
+	public void close() throws IOException {
+		// 清除请求缓存数据
+		cachedRequest.close();
+	}
 
 }

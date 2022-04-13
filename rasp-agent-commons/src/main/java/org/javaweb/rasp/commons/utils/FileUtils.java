@@ -441,13 +441,13 @@ public class FileUtils {
 			while ((a = fis.read(bytes)) != -1) {
 				baos.write(bytes, 0, a);
 			}
+
+			return baos.toByteArray();
 		} finally {
 			if (fis != null) {
 				fis.close();
 			}
 		}
-
-		return baos.toByteArray();
 	}
 
 }

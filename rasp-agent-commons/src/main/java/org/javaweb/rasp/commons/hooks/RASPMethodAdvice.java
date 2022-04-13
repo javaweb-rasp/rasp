@@ -1,6 +1,7 @@
 package org.javaweb.rasp.commons.hooks;
 
-import org.javaweb.rasp.commons.loader.hooks.HookResult;
+import java.rasp.proxy.loader.HookResult;
+
 import org.javaweb.rasp.commons.MethodHookEvent;
 
 import static org.javaweb.rasp.commons.constants.RASPConstants.DEFAULT_HOOK_RESULT;

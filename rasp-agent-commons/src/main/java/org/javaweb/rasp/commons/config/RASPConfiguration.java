@@ -196,8 +196,14 @@ public class RASPConfiguration {
 		RASPPropertiesConfiguration<RASPAppProperties> config = APPLICATION_CONFIG_MAP.get(hashCode);
 
 		if (config != null) return config;
-		String filename   = contextPath + ".properties";
-		File   configFile = new File(RASP_APP_CONFIG_DIRECTORY, filename);
+
+		String filename = contextPath + ".properties";
+
+		if (filename.startsWith("/")) {
+			filename = filename.substring(1).replace("/", "_");
+		}
+
+		File configFile = new File(RASP_APP_CONFIG_DIRECTORY, filename);
 
 		RASPPropertiesConfiguration<RASPAppProperties> configuration = null;
 

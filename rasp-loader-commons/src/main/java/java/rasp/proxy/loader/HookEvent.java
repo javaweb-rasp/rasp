@@ -1,4 +1,4 @@
-package org.javaweb.rasp.commons.loader.hooks;
+package java.rasp.proxy.loader;
 
 import java.util.Arrays;
 

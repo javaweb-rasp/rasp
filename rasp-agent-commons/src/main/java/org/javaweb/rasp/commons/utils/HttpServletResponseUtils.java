@@ -1,6 +1,7 @@
 package org.javaweb.rasp.commons.utils;
 
-import org.javaweb.rasp.commons.RASPModuleType;
+import java.rasp.proxy.loader.RASPModuleType;
+
 import org.javaweb.rasp.commons.cache.RASPCachedRequest;
 import org.javaweb.rasp.commons.context.RASPHttpRequestContext;
 import org.javaweb.rasp.commons.servlet.HttpServletRequestProxy;

@@ -455,7 +455,7 @@ public class StringUtils {
 		}
 
 		// 比较内容是否一样
-		for (int i = trim[0], j = trim2[0]; i < trim[1] && j < trim[1]; i++, j++) {
+		for (int i = trim[0], j = trim2[0]; i < trim[1] && j < trim2[1]; i++, j++) {
 			char chr  = str.charAt(i);
 			char chr2 = prefix.charAt(j);
 

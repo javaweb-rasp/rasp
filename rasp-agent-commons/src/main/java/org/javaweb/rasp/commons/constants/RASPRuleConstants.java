@@ -88,11 +88,6 @@ public class RASPRuleConstants {
 	public static final String DISABLE_CMD = "disable_cmd";
 
 	/**
-	 * 是否禁止脚本引擎解析
-	 */
-	public static final String DISABLE_SCRIPT_ENGINE = "disable_script_engine";
-
-	/**
 	 * 配置允许执行本地系统命令的类正则
 	 */
 	public static final String ALLOWED_CMD_CLASS_NAME = "allowed_cmd_class_name";
@@ -106,5 +101,10 @@ public class RASPRuleConstants {
 	 * 设置是否禁止在Agent启动后修改任何jsp/jspx类型的动态脚本文件
 	 */
 	public static final String DISABLE_NEW_JSP = "disable_new_jsp";
+
+	/**
+	 * 设置禁止被DataBinder加载的field正则表达式
+	 */
+	public static final String DATA_BINDER_DISABLE_FIELD_REGEXP = "data_binder_disable_field_regexp";
 
 }

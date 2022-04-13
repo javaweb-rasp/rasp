@@ -38,13 +38,13 @@ public class RASPRuleProperties extends RASPProperties {
 
 	private boolean disableCmd;
 
-	private boolean disableScriptEngine;
-
 	private String[] allowedCmdClassName;
 
 	private String[] disallowedCmdClassName;
 
 	private boolean disableNewJsp;
+
+	private String dataBinderDisableFieldRegexp;
 
 	public void reloadConfig(RASPConfigMap<String, Object> configMap) {
 		super.reloadConfig(configMap);
@@ -66,10 +66,10 @@ public class RASPRuleProperties extends RASPProperties {
 		this.deserialization = configMap.getArray(DESERIALIZATION);
 		this.scannerUserAgent = configMap.getArray(SCANNER_USER_AGENT);
 		this.disableCmd = configMap.getBoolean(DISABLE_CMD, false);
-		this.disableScriptEngine = configMap.getBoolean(DISABLE_SCRIPT_ENGINE, true);
 		this.allowedCmdClassName = configMap.getArray(ALLOWED_CMD_CLASS_NAME);
 		this.disallowedCmdClassName = configMap.getArray(DISALLOWED_CMD_CLASS_NAME);
 		this.disableNewJsp = configMap.getBoolean(DISABLE_NEW_JSP, false);
+		this.dataBinderDisableFieldRegexp = configMap.getString(DATA_BINDER_DISABLE_FIELD_REGEXP);
 	}
 
 	public String[] getUploadNotAllowedSuffix() {
@@ -140,10 +140,6 @@ public class RASPRuleProperties extends RASPProperties {
 		return disableCmd;
 	}
 
-	public boolean isDisableScriptEngine() {
-		return disableScriptEngine;
-	}
-
 	public String[] getAllowedCmdClassName() {
 		return allowedCmdClassName;
 	}
@@ -154,6 +150,10 @@ public class RASPRuleProperties extends RASPProperties {
 
 	public boolean isDisableNewJsp() {
 		return disableNewJsp;
+	}
+
+	public String getDataBinderDisableFieldRegexp() {
+		return dataBinderDisableFieldRegexp;
 	}
 
 }

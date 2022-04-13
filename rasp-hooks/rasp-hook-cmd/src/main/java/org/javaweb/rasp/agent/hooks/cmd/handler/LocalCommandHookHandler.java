@@ -6,16 +6,16 @@ import org.javaweb.rasp.commons.attack.RASPParameterPosition;
 import org.javaweb.rasp.commons.cache.RASPCachedParameter;
 import org.javaweb.rasp.commons.cache.RASPCachedRequest;
 import org.javaweb.rasp.commons.context.RASPHttpRequestContext;
-import org.javaweb.rasp.commons.hooks.RASPHookException;
-import org.javaweb.rasp.commons.loader.hooks.HookResult;
 import org.javaweb.rasp.commons.utils.StringUtils;
 
+import java.rasp.proxy.loader.HookResult;
+import java.rasp.proxy.loader.RASPHookException;
 import java.util.List;
 import java.util.Set;
 
-import static org.javaweb.rasp.agent.hooks.cmd.LocalCommandHook.cmdType;
+import static java.rasp.proxy.loader.HookResultType.THROW;
+import static org.javaweb.rasp.agent.hooks.cmd.LocalCommandHook.CMD_TYPE;
 import static org.javaweb.rasp.commons.constants.RASPConstants.DEFAULT_HOOK_RESULT;
-import static org.javaweb.rasp.commons.loader.hooks.HookResultType.THROW;
 
 /**
  * RASP防御本地系统命令执行示例
@@ -24,7 +24,7 @@ import static org.javaweb.rasp.commons.loader.hooks.HookResultType.THROW;
  */
 public class LocalCommandHookHandler {
 
-	private static final HookResult<?> BLOCK_RESULT = new HookResult<Object>(THROW, new RASPHookException(cmdType));
+	private static final HookResult<?> BLOCK_RESULT = new HookResult<Object>(THROW, new RASPHookException(CMD_TYPE));
 
 	/**
 	 * 本地命令执行拦截模块，如果系统执行的CMD命令和请求参数完全一致则直接拦截
@@ -42,7 +42,7 @@ public class LocalCommandHookHandler {
 			RASPCachedRequest      cachedRequest = context.getCachedRequest();
 
 			// 检测当前请求是否需要经过安全模块检测和过滤且该模块是否是开启状态
-			if (!context.mustFilter(cmdType)) {
+			if (!context.mustFilter(CMD_TYPE)) {
 				return DEFAULT_HOOK_RESULT;
 			}
 
@@ -69,7 +69,7 @@ public class LocalCommandHookHandler {
 					for (String cmd : commands) {
 						if (value.equals(cmd)) {
 							// 添加攻击日志记录
-							context.addAttackInfo(new RASPAttackInfo(cmdType, key, commands, position, event, true));
+							context.addAttackInfo(new RASPAttackInfo(CMD_TYPE, key, commands, position, event, true));
 
 							return BLOCK_RESULT;
 						}

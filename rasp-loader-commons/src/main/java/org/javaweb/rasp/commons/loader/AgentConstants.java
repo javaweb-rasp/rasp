@@ -1,5 +1,9 @@
 package org.javaweb.rasp.commons.loader;
 
+import java.rasp.proxy.loader.HookResult;
+
+import static java.rasp.proxy.loader.HookResultType.RETURN;
+
 /**
  * Creator: yz
  * Date: 2020-04-05
@@ -95,5 +99,10 @@ public class AgentConstants {
 	 * RASP 规则文件名称
 	 */
 	public static final String AGENT_RULES_FILE_NAME = AGENT_FILE_PREFIX_NAME + "-rules.properties";
+
+	/**
+	 * Hook 默认的返回功能
+	 */
+	public static final HookResult<?> DEFAULT_HOOK_RESULT = new HookResult<Object>(RETURN);
 
 }

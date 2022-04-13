@@ -1,10 +1,14 @@
-package org.javaweb.rasp.commons.loader.hooks;
+package java.rasp.proxy.loader;
+
+import static java.rasp.proxy.loader.HookResultType.*;
 
 /**
  * Creator: yz
  * Date: 2019-06-20
  */
 public class HookResult<T> {
+
+	public static final HookResult<String> DEFAULT_STRING_RESULT = new HookResult<String>(RETURN);
 
 	/**
 	 * Hook结果处理方式
@@ -14,7 +18,7 @@ public class HookResult<T> {
 	/**
 	 * Hook抛出的异常,如果HookMethodType的值为THROW那么exception的值必须设置
 	 */
-	private Throwable exception;
+	private RASPHookException exception;
 
 	/**
 	 * Hook返回值,如果Hook的方法有返回值且HookMethodType的值为REPLACE,那么returnValue值必须被修改
@@ -41,7 +45,7 @@ public class HookResult<T> {
 		this.forceReplace = forceReplace;
 	}
 
-	public HookResult(HookResultType handlerType, Throwable exception) {
+	public HookResult(HookResultType handlerType, RASPHookException exception) {
 		this.hookResultType = handlerType;
 		this.exception = exception;
 	}
@@ -53,8 +57,7 @@ public class HookResult<T> {
 	 * @param exception   异常
 	 * @param returnValue 返回值
 	 */
-	public HookResult(HookResultType handlerType, Throwable exception, T returnValue) {
-
+	public HookResult(HookResultType handlerType, RASPHookException exception, T returnValue) {
 		this.hookResultType = handlerType;
 		this.exception = exception;
 		this.returnValue = returnValue;
@@ -68,11 +71,11 @@ public class HookResult<T> {
 		this.hookResultType = hookResultType;
 	}
 
-	public Throwable getException() {
+	public RASPHookException getException() {
 		return exception;
 	}
 
-	public void setException(Throwable exception) {
+	public void setException(RASPHookException exception) {
 		this.exception = exception;
 	}
 
@@ -90,6 +93,27 @@ public class HookResult<T> {
 
 	public void setForceReplace(boolean forceReplace) {
 		this.forceReplace = forceReplace;
+	}
+
+	public HookResult<String> stringResult() {
+		if (hookResultType == RETURN) {
+			return DEFAULT_STRING_RESULT;
+		} else if (hookResultType == THROW) {
+			return new HookResult<String>(THROW, exception);
+		}
+
+		String value = null;
+
+		if (this.returnValue instanceof String[]) {
+			String[] values = (String[]) this.returnValue;
+
+			if (values.length > 0) {
+				value = values[0];
+			}
+		}
+
+		// 替换返回值
+		return new HookResult<String>(REPLACE_OR_BLOCK, value, forceReplace);
 	}
 
 	@Override

@@ -1,12 +1,14 @@
 package org.javaweb.rasp.commons.constants;
 
-import org.javaweb.rasp.commons.loader.hooks.HookResult;
+import java.rasp.proxy.loader.HookResult;
 
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.DOTALL;
-import static org.javaweb.rasp.commons.loader.hooks.HookResultType.RETURN;
+import static java.rasp.proxy.loader.HookResultType.RETURN;
 
 /**
  * RASP 全局常量定义
@@ -47,6 +49,16 @@ public class RASPConstants {
 	 * Hook 默认的返回功能
 	 */
 	public static final HookResult<?> DEFAULT_HOOK_RESULT = new HookResult<Object>(RETURN);
+
+	public static final HookResult<Map<String, String[]>> DEFAULT_MAP_RESULT =
+			new HookResult<Map<String, String[]>>(RETURN);
+
+	public static final HookResult<String> DEFAULT_STRING_RESULT = new HookResult<String>(RETURN);
+
+	public static final HookResult<Enumeration<String>> DEFAULT_ENUMERATION_RESULT =
+			new HookResult<Enumeration<String>>(RETURN);
+
+	public static final HookResult<String[]> DEFAULT_STRING_ARRAY_RESULT = new HookResult<String[]>(RETURN);
 
 	/**
 	 * RASP git配置文件名称

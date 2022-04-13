@@ -11,12 +11,19 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import org.javaweb.rasp.commons.cache.RASPCachedParameter;
+import org.javaweb.rasp.commons.cache.RASPCachedRequest;
+import org.javaweb.rasp.commons.cache.RASPParameterSet;
+import org.javaweb.rasp.commons.context.RASPHttpRequestContext;
+
+import java.rasp.proxy.loader.HookResult;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 
 import static org.javaweb.rasp.commons.attack.RASPParameterPosition.JSON;
+import static org.javaweb.rasp.commons.constants.RASPConstants.DEFAULT_HOOK_RESULT;
+import static java.rasp.proxy.loader.HookResultType.RETURN;
 
 /**
  * Created by yz on 2017/2/20.
@@ -37,7 +44,7 @@ public class JsonUtils {
 	}
 
 	private static <T> T fromJson(Object object, Type typeOfT) {
-		String json = null;
+		String json;
 
 		if (object instanceof String) {
 			json = (String) object;
@@ -64,19 +71,6 @@ public class JsonUtils {
 		}
 
 		return new HashSet<Map<String, Object>>();
-	}
-
-	public static Object toJSONObject(String json) {
-		return GSON.fromJson(json, Object.class);
-	}
-
-	public static List<Map<String, Object>> toJsonArrayMap(Object object) {
-		if (object != null) {
-			return fromJson(object, new TypeToken<List<Map<String, Object>>>() {
-			}.getType());
-		}
-
-		return new ArrayList<Map<String, Object>>();
 	}
 
 	/**
@@ -150,83 +144,112 @@ public class JsonUtils {
 
 	}
 
-	public static void deserializeObject(final com.dslplatform.json.JsonReader<Object> reader,
-	                                     Set<RASPCachedParameter> cachedParameters) throws IOException {
+	public static HookResult<?> deserializeObject(final com.dslplatform.json.JsonReader<Object> reader,
+	                                              final RASPHttpRequestContext context) throws IOException {
 
-		deserializeObject(reader, cachedParameters, null);
+		return deserializeObject(reader, context, null);
 	}
 
 	@Nullable
-	public static void deserializeObject(final com.dslplatform.json.JsonReader<Object> reader,
-	                                     Set<RASPCachedParameter> cachedParameters, String key) throws IOException {
+	public static HookResult<?> deserializeObject(final com.dslplatform.json.JsonReader<Object> reader,
+	                                              final RASPHttpRequestContext context,
+	                                              String key) throws IOException {
 
 		switch (reader.last()) {
 			case 'n':
 				if (!reader.wasNull()) {
 					throw reader.newParseErrorAt("Expecting 'null' for null constant", 0);
 				}
-				return;
+
+				return DEFAULT_HOOK_RESULT;
 			case 't':
 				if (!reader.wasTrue()) {
 					throw reader.newParseErrorAt("Expecting 'true' for true constant", 0);
 				}
-				return;
+
+				return DEFAULT_HOOK_RESULT;
 			case 'f':
 				if (!reader.wasFalse()) {
 					throw reader.newParseErrorAt("Expecting 'false' for false constant", 0);
 				}
-				return;
+
+				return DEFAULT_HOOK_RESULT;
 			case '"':
-				cachedParameters.add(new RASPCachedParameter(key, reader.readString(), JSON));
-				return;
+				RASPCachedRequest request = context.getCachedRequest();
+				RASPParameterSet<RASPCachedParameter> cachedParameters = request.getCachedParameter();
+				RASPCachedParameter parameter = new RASPCachedParameter(key, reader.readString(), JSON);
+
+				return cachedParameters.cacheParameter(parameter);
 			case '{':
-				deserializeMap(reader, cachedParameters);
-				return;
+				return deserializeMap(reader, context);
 			case '[':
-				deserializeList(reader, cachedParameters);
-				return;
+				deserializeList(reader, context);
+				return DEFAULT_HOOK_RESULT;
 			default:
 				NumberConverter.deserializeNumber(reader);
+				return DEFAULT_HOOK_RESULT;
 		}
 	}
 
-	public static void deserializeList(final com.dslplatform.json.JsonReader<Object> reader,
-	                                   Set<RASPCachedParameter> cachedParameters) throws IOException {
+	public static HookResult<?> deserializeList(final com.dslplatform.json.JsonReader<Object> reader,
+	                                            final RASPHttpRequestContext context) throws IOException {
 
 		if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
 		byte nextToken = reader.getNextToken();
 		if (nextToken == ']') {
-			return;
+			return null;
 		}
 
-		deserializeObject(reader, cachedParameters);
+		HookResult<?> result = deserializeObject(reader, context);
+
+		if (result != null && result.getRASPHookResultType() != RETURN) {
+			return result;
+		}
+
 		while ((nextToken = reader.getNextToken()) == ',') {
 			reader.getNextToken();
-			deserializeObject(reader, cachedParameters);
+			result = deserializeObject(reader, context);
+
+			if (result != null && result.getRASPHookResultType() != RETURN) {
+				return result;
+			}
 		}
 
 		if (nextToken != ']') throw reader.newParseError("Expecting ']' for list end");
+		return result;
 	}
 
-	public static void deserializeMap(final com.dslplatform.json.JsonReader<Object> reader,
-	                                  Set<RASPCachedParameter> cachedParameters) throws IOException {
+	public static HookResult<?> deserializeMap(final com.dslplatform.json.JsonReader<Object> reader,
+	                                           final RASPHttpRequestContext context) throws IOException {
 
 		if (reader.last() != '{') throw reader.newParseError("Expecting '{' for map start");
 		byte nextToken = reader.getNextToken();
-		if (nextToken == '}') {
 
-			return;
+		if (nextToken == '}') {
+			return null;
 		}
-		String key = reader.readKey();
-		deserializeObject(reader, cachedParameters, key);
+
+		String        key    = reader.readKey();
+		HookResult<?> result = deserializeObject(reader, context, key);
+
+		if (result != null && result.getRASPHookResultType() != RETURN) {
+			return result;
+		}
 
 		while ((nextToken = reader.getNextToken()) == ',') {
 			reader.getNextToken();
 			key = reader.readKey();
-			deserializeObject(reader, cachedParameters, key);
+
+			result = deserializeObject(reader, context, key);
+
+			if (result != null && result.getRASPHookResultType() != RETURN) {
+				return result;
+			}
 		}
 
 		if (nextToken != '}') throw reader.newParseError("Expecting '}' for map end");
+
+		return result;
 	}
 
 }
