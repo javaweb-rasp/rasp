@@ -1,18 +1,21 @@
 package org.javaweb.rasp.commons.utils;
 
+import org.javaweb.rasp.commons.cache.RASPCachedParameter;
+import org.javaweb.rasp.commons.cache.RASPCachedRequest;
 import org.javaweb.rasp.commons.context.RASPHttpRequestContext;
 import org.javaweb.rasp.commons.servlet.HttpServletRequestProxy;
 import org.javaweb.rasp.commons.servlet.HttpServletResponseProxy;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.javaweb.rasp.commons.attack.RASPParameterPosition.PARAMETER_MAP;
+import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_LOGGER;
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_PROPERTIES;
+import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
+import static org.javaweb.rasp.commons.utils.ArrayUtils.addAll;
 import static org.javaweb.rasp.commons.utils.IPV4Utils.*;
 
 /**
@@ -210,6 +213,54 @@ public class HttpServletRequestUtils {
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * 获取Http请求中的参数，用于日志记录
+	 *
+	 * @param context RASP上下文
+	 * @return 参数Map
+	 */
+	public static Map<String, String[]> getLogParameterMap(RASPHttpRequestContext context) {
+		Map<String, String[]> logMap = null;
+
+		try {
+			HttpServletRequestProxy servletRequest = context.getServletRequest();
+			RASPCachedRequest       cachedRequest  = context.getCachedRequest();
+			Map<String, String[]>   map            = servletRequest.getParameterMap();
+			logMap = new HashMap<String, String[]>();
+
+			if (map != null && !map.isEmpty()) {
+				logMap.putAll(map);
+			}
+
+			// 缓存的被调用过的参数集合
+			Set<RASPCachedParameter> cachedParameterList = cachedRequest.getCachedParameter();
+
+			// 缓存ParameterMap
+			for (RASPCachedParameter parameter : cachedParameterList) {
+				if (PARAMETER_MAP == parameter.getRaspAttackPosition()) {
+					continue;
+				}
+
+				String   key    = parameter.getKey();
+				String[] values = parameter.getValue();
+
+				if (map != null) {
+					String[] val = map.get(key);
+
+					if (Arrays.equals(val, values)) {
+						continue;
+					}
+				}
+
+				logMap.put(key, addAll(logMap.get(key), values));
+			}
+		} catch (Exception e) {
+			AGENT_LOGGER.error("{}记录日志异常：{}", AGENT_NAME, e.toString());
+		}
+
+		return logMap;
 	}
 
 }

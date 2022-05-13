@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.javaweb.rasp.commons.RASPLogger.createRASPLogger;
+import static org.javaweb.rasp.commons.log.RASPLogger.createRASPLogger;
 import static org.javaweb.rasp.commons.constants.RASPConstants.FORBIDDEN_FILE;
 import static org.javaweb.rasp.commons.loader.AgentConstants.*;
 import static org.javaweb.rasp.commons.utils.FileUtils.copyFile;

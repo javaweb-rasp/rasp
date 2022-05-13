@@ -220,7 +220,7 @@ public class StringUtils {
 	 * @param delimiters the delimiter characters, assembled as a {@code String}
 	 *                   (each of the characters is individually considered as a delimiter)
 	 * @return an array of the tokens
-	 * @see java.util.StringTokenizer
+	 * @see StringTokenizer
 	 * @see String#trim()
 	 */
 	public static String[] tokenizeToStringArray(String str, String delimiters) {
@@ -243,7 +243,7 @@ public class StringUtils {
 	 *                          (only applies to tokens that are empty after trimming; StringTokenizer
 	 *                          will not consider subsequent delimiters as token in the first place).
 	 * @return an array of the tokens
-	 * @see java.util.StringTokenizer
+	 * @see StringTokenizer
 	 * @see String#trim()
 	 */
 	public static String[] tokenizeToStringArray(String str, String delimiters,
@@ -466,6 +466,10 @@ public class StringUtils {
 		}
 
 		return true;
+	}
+
+	public static String genUUID() {
+		return UUID.randomUUID().toString().replace("-", "");
 	}
 
 }

@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.javaweb.rasp.agent.hooks.cmd.handler.LocalCommandHookHandler.processCommand;
-import static org.javaweb.rasp.commons.RASPLogger.moduleErrorLog;
 import static org.javaweb.rasp.commons.constants.RASPConstants.DEFAULT_HOOK_RESULT;
+import static org.javaweb.rasp.commons.log.RASPLogger.moduleErrorLog;
 import static org.javaweb.rasp.commons.utils.ReflectionUtils.invokeFieldProxy;
 
 /**

@@ -96,7 +96,7 @@ public class RASPOutputStreamCache extends OutputStream {
 		HookResult<?> result = serialization(context, getInputStream());
 
 		// 检测到有攻击且非静默模式需要抛出异常阻断程序逻辑
-		if (result.getRASPHookResultType() == THROW && !context.isSilent()) {
+		if (result != null && result.getRASPHookResultType() == THROW && !context.isSilent()) {
 			throw new IOException(result.getException().getMessage());
 		}
 	}

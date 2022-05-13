@@ -11,7 +11,7 @@
  * under the terms of the GNU Lesser General Public License version 2.1
  * as published by the Free Software Foundation.
  */
-package org.javaweb.rasp.commons.logger;
+package org.javaweb.rasp.commons.logback;
 
 import ch.qos.logback.core.recovery.ResilientFileOutputStream;
 import ch.qos.logback.core.rolling.RolloverFailure;
@@ -60,9 +60,9 @@ public class RASPFileAppender<E> extends RASPOutputStreamAppender<E> {
 
 	private FileSize bufferSize = new FileSize(DEFAULT_BUFFER_SIZE);
 
-	private int minFileSize = 1000 * 1000;
-
 	private long fileSize;
+
+	private final long minFileSize = 1024 * 1000;
 
 	/**
 	 * The <b>File</b> property takes a string value which should be the name of
@@ -131,7 +131,7 @@ public class RASPFileAppender<E> extends RASPOutputStreamAppender<E> {
 				// file should be opened only if collision free
 				try {
 					openFile(getFile());
-				} catch (java.io.IOException e) {
+				} catch (IOException e) {
 					errors++;
 					addError("openFile(" + fileName + "," + append + ") call failed.", e);
 				}
@@ -204,13 +204,13 @@ public class RASPFileAppender<E> extends RASPOutputStreamAppender<E> {
 	 * <b>Do not use this method directly. To configure a FileAppender or one of
 	 * its subclasses, set its properties one by one and then call start().</b>
 	 *
-	 * @param file_name The path to the log file.
+	 * @param fileName The path to the log file.
 	 */
-	public void openFile(String file_name) throws IOException {
+	public void openFile(String fileName) throws IOException {
 		lock.lock();
 
 		try {
-			File    file   = new File(file_name);
+			File    file   = new File(fileName);
 			boolean result = FileUtil.createMissingParentDirectories(file);
 
 			if (!result) {
@@ -318,11 +318,13 @@ public class RASPFileAppender<E> extends RASPOutputStreamAppender<E> {
 
 				if (file.renameTo(targetFile)) {
 					try {
-						List<File> fileList = FileUtils.split(targetFile, fileSize);
+						if (targetFile.length() > fileSize) {
+							List<File> fileList = FileUtils.split(targetFile, fileSize);
 
-						// 如果切割了多个文件，直接删除切割之前的文件
-						if (fileList.size() > 0) {
-							targetFile.delete();
+							// 如果切割了多个文件，直接删除切割之前的文件
+							if (fileList.size() > 0) {
+								targetFile.delete();
+							}
 						}
 					} catch (IOException e) {
 						throw new RolloverFailure("File [" + targetFile + "] split failed.");
@@ -336,19 +338,11 @@ public class RASPFileAppender<E> extends RASPOutputStreamAppender<E> {
 		}
 	}
 
-	public void setMinFileSize(int minFileSize) {
-		if (minFileSize > 1000) {
-			this.minFileSize = minFileSize;
-		} else {
-			addError("The minimum log file must be greater than 1 KB！");
-		}
-	}
-
 	public void setFileSize(long fileSize) {
-		if (fileSize > minFileSize) {
+		if (fileSize > 0) {
 			this.fileSize = fileSize;
 		} else {
-			addError("The file size must be greater than " + minFileSize + " ！");
+			this.fileSize = minFileSize;
 		}
 	}
 

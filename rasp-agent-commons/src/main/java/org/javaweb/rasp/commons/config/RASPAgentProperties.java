@@ -6,6 +6,8 @@ import static org.javaweb.rasp.commons.constants.RASPConstants.JAVASSIST;
 
 public class RASPAgentProperties extends RASPProperties {
 
+	private String logVersion;
+
 	private String siteID;
 
 	private String rc4Key;
@@ -24,6 +26,8 @@ public class RASPAgentProperties extends RASPProperties {
 
 	private int syncInterval;
 
+	private int flushInterval;
+
 	private String proxyIpHeader;
 
 	private String logLevel;
@@ -34,6 +38,7 @@ public class RASPAgentProperties extends RASPProperties {
 	public void reloadConfig(RASPConfigMap<String, Object> configMap) {
 		super.reloadConfig(configMap);
 
+		this.logVersion = configMap.getString(LOG_VERSION);
 		this.siteID = configMap.getString(SITE_ID);
 		this.rc4Key = configMap.getString(SYSTEM_RC4_KEY);
 		this.connectKey = configMap.getString(SYSTEM_CONNECT_KEY);
@@ -47,9 +52,14 @@ public class RASPAgentProperties extends RASPProperties {
 		this.displayVersion = configMap.getBoolean(DISPLAY_VERSION, true);
 		this.bytecodeEditor = configMap.getString(BYTECODE_EDITOR, JAVASSIST);
 		this.syncInterval = configMap.getInt(SYNC_INTERVAL, 30);
+		this.flushInterval = configMap.getInt(FLUSH_INTERVAL, 3);
 		this.proxyIpHeader = configMap.getString(PROXY_IP_HEADER, "x-forwarded-for");
 		this.logLevel = configMap.getString(LOG_LEVEL);
 		this.version = configMap.getString(VERSION);
+	}
+
+	public String getLogVersion() {
+		return logVersion;
 	}
 
 	public String getSiteID() {
@@ -86,6 +96,10 @@ public class RASPAgentProperties extends RASPProperties {
 
 	public int getSyncInterval() {
 		return syncInterval;
+	}
+
+	public int getFlushInterval() {
+		return flushInterval;
 	}
 
 	public String getProxyIpHeader() {

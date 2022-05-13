@@ -5,6 +5,7 @@ import org.javaweb.rasp.commons.MethodHookEvent;
 import java.rasp.proxy.loader.RASPModuleType;
 
 import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_PACKAGE_PREFIX;
+import static org.javaweb.rasp.commons.utils.StringUtils.genUUID;
 
 /**
  * Web攻击详情信息
@@ -53,6 +54,11 @@ public class RASPAttackInfo {
 	 * Hook调用链
 	 */
 	private String traceElements;
+
+	/**
+	 * 攻击Hash值
+	 */
+	private final String attackHash = genUUID();
 
 	private static final String HOOK_PROXY_CLASS_NAME = AGENT_PACKAGE_PREFIX + "loader.hooks.HookProxy";
 
@@ -186,6 +192,10 @@ public class RASPAttackInfo {
 
 	public String getTraceElements() {
 		return traceElements;
+	}
+
+	public String getAttackHash() {
+		return attackHash;
 	}
 
 }

@@ -26,4 +26,8 @@ public class ArrayUtils {
 		return org.apache.commons.lang3.ArrayUtils.toString(array);
 	}
 
+	public static <T> T[] addAll(final T[] array1, final T... array2) {
+		return org.apache.commons.lang3.ArrayUtils.addAll(array1, array2);
+	}
+
 }

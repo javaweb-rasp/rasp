@@ -197,7 +197,7 @@ public class JsonUtils {
 		if (reader.last() != '[') throw reader.newParseError("Expecting '[' for list start");
 		byte nextToken = reader.getNextToken();
 		if (nextToken == ']') {
-			return null;
+			return DEFAULT_HOOK_RESULT;
 		}
 
 		HookResult<?> result = deserializeObject(reader, context);
@@ -226,7 +226,7 @@ public class JsonUtils {
 		byte nextToken = reader.getNextToken();
 
 		if (nextToken == '}') {
-			return null;
+			return DEFAULT_HOOK_RESULT;
 		}
 
 		String        key    = reader.readKey();

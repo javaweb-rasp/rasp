@@ -361,7 +361,14 @@ public abstract class RASPHttpRequestContext implements Closeable {
 	public abstract boolean isWebApiRequest();
 
 	/**
-	 * 返回是否是访问的jsp动态脚本文件
+	 * 预处理JSP/JSPX请求，当JSP/JSPX请求时会先调用此方法
+	 *
+	 * @param event Hook事件
+	 */
+	public abstract void preJSPRequest(MethodHookEvent event);
+
+	/**
+	 * 返回是否是访问的jsp/jspx动态脚本文件
 	 *
 	 * @return 访问文件后缀是否是jsp
 	 */

@@ -48,9 +48,14 @@ public class RASPRuleConstants {
 	public static final String XSTREAM_DISABLE_CLASS = "xstream.disable_class";
 
 	/**
-	 * WebShell 特征
+	 * WebShell 特征（旧）
 	 */
 	public static final String WEBSHELL_FEATURE = "webshell.feature";
+
+	/**
+	 * WebShell 特征（新）
+	 */
+	public static final String WEBSHELL_CONFIG = "webshell.config";
 
 	/**
 	 * Ognl表达式正则

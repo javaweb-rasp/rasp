@@ -1,4 +1,4 @@
-package org.javaweb.rasp.commons;
+package org.javaweb.rasp.commons.log;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -9,13 +9,11 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.util.FileSize;
 import org.javaweb.rasp.commons.config.RASPConfiguration;
 import org.javaweb.rasp.commons.loader.AgentConstants;
-
-import java.rasp.proxy.loader.RASPModuleType;
-
-import org.javaweb.rasp.commons.logger.RASPFileAppender;
+import org.javaweb.rasp.commons.logback.RASPFileAppender;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.rasp.proxy.loader.RASPModuleType;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

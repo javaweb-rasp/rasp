@@ -1,7 +1,6 @@
 package org.javaweb.rasp.commons.utils;
 
-import java.rasp.proxy.loader.RASPModuleType;
-
+import org.javaweb.rasp.commons.attack.RASPAttackInfo;
 import org.javaweb.rasp.commons.cache.RASPCachedRequest;
 import org.javaweb.rasp.commons.context.RASPHttpRequestContext;
 import org.javaweb.rasp.commons.servlet.HttpServletRequestProxy;
@@ -9,12 +8,12 @@ import org.javaweb.rasp.commons.servlet.HttpServletResponseProxy;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import java.rasp.proxy.loader.RASPModuleType;
 
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_LOGGER;
 import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
 import static org.javaweb.rasp.commons.utils.HttpServletRequestUtils.htmlSpecialChars;
 import static org.javaweb.rasp.commons.utils.StringUtils.isNotEmpty;
-import static org.javaweb.rasp.commons.utils.StringUtils.replaceAll;
 
 public class HttpServletResponseUtils {
 
@@ -38,7 +37,10 @@ public class HttpServletResponseUtils {
 		response(context, "text/plain;charset=UTF-8", text);
 	}
 
-	public static void accessDenied(RASPHttpRequestContext context, RASPModuleType moduleType, String text) {
+	public static void accessDenied(RASPHttpRequestContext context, RASPAttackInfo attack, String text) {
+		String         attackHash = attack.getAttackHash();
+		RASPModuleType moduleType = attack.getRaspModuleType();
+
 		if (isNotEmpty(text) && moduleType != null) {
 			HttpServletRequestProxy request     = context.getServletRequest();
 			String                  queryString = request.getQueryString();
@@ -49,10 +51,13 @@ public class HttpServletResponseUtils {
 				url += "?" + htmlSpecialChars(queryString);
 			}
 
-			text = replaceAll(text,
-					new String[]{"${agent.name}", "${attack.name}", "${request.url}", "${attack.desc}", "攻击攻击"},
-					new String[]{AGENT_NAME, moduleType.getModuleName(), url, moduleType.getModuleDesc(), "攻击"}
-			);
+			String attackInfo = "{" +
+					"'agent-name': '" + AGENT_NAME + "', 'attack-name': '" + moduleType.getModuleName() + "'," +
+					"'request-url': '" + url + "', 'attack-desc': '" + moduleType.getModuleDesc() + "'," +
+					"'attack-hash': '" + attackHash + "'" +
+					"}";
+
+			text = text.replace("$attackInfo", attackInfo);
 		}
 
 		response(context, "text/html;charset=UTF-8", text);

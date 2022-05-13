@@ -3,11 +3,17 @@ package org.javaweb.rasp.commons;
 import org.javaweb.rasp.commons.config.RASPAppProperties;
 import org.javaweb.rasp.commons.config.RASPPropertiesConfiguration;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static org.javaweb.rasp.commons.log.RASPLogger.getLoggerName;
+import static org.javaweb.rasp.commons.log.RASPLogger.hasLogger;
+import static org.javaweb.rasp.commons.config.RASPConfiguration.RASP_APP_CONFIG_DIRECTORY;
+import static org.javaweb.rasp.commons.config.RASPConfiguration.getWebApplicationConfig;
+import static org.javaweb.rasp.commons.loader.AgentConstants.ATTACK_LOGGER_PREFIX;
+import static org.javaweb.rasp.commons.utils.URLUtils.getStandardContextPath;
 
 public class RASPRequestEnv {
 
@@ -33,6 +39,38 @@ public class RASPRequestEnv {
 
 	public RASPPropertiesConfiguration<RASPAppProperties> getAppConfig() {
 		return appConfig;
+	}
+
+	/**
+	 * 获取Web应用的RASP配置对象
+	 *
+	 * @return 应用配置列表
+	 */
+	public static List<RASPPropertiesConfiguration<RASPAppProperties>> getAppConfigList() {
+		List<RASPPropertiesConfiguration<RASPAppProperties>> configList =
+				new ArrayList<RASPPropertiesConfiguration<RASPAppProperties>>();
+
+		File[] apps = RASP_APP_CONFIG_DIRECTORY.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".properties");
+			}
+		});
+
+		if (apps == null) return configList;
+
+		for (File app : apps) {
+			// 截取web应用名称
+			String appName     = app.getName().substring(0, app.getName().lastIndexOf('.'));
+			String contextPath = getStandardContextPath(appName);
+			String loggerName  = getLoggerName(ATTACK_LOGGER_PREFIX, contextPath);
+
+			if (hasLogger(loggerName)) {
+				configList.add(getWebApplicationConfig(contextPath));
+			}
+		}
+
+		return configList;
 	}
 
 }

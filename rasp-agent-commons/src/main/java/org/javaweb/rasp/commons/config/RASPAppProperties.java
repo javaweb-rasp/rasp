@@ -37,6 +37,11 @@ public class RASPAppProperties extends RASPProperties {
 	private String[] urlBlacklist;
 
 	/**
+	 * 请求头中无需过滤的白名单
+	 */
+	private String[] headerWhitelist;
+
+	/**
 	 * 白名单列表
 	 */
 	private Set<Map<String, Object>> whitelist = new HashSet<Map<String, Object>>();
@@ -71,6 +76,7 @@ public class RASPAppProperties extends RASPProperties {
 		this.silent = configMap.getBoolean(SILENT, false);
 		this.ipBlacklist = configMap.getArray(IP_BLACKLIST);
 		this.urlBlacklist = configMap.getArray(URL_BLACKLIST);
+		this.headerWhitelist = configMap.getArray(HEADER_WHITELIST);
 
 		String whitelistStr = configMap.getString(WHITELIST);
 		String patchListStr = configMap.getString(PATCH_LIST);
@@ -110,6 +116,10 @@ public class RASPAppProperties extends RASPProperties {
 
 	public String[] getUrlBlacklist() {
 		return urlBlacklist;
+	}
+
+	public String[] getHeaderWhitelist() {
+		return headerWhitelist;
 	}
 
 	public Set<Map<String, Object>> getWhitelist() {

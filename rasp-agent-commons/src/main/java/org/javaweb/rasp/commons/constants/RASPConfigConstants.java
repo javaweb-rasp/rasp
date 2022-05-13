@@ -8,6 +8,8 @@ package org.javaweb.rasp.commons.constants;
  */
 public class RASPConfigConstants {
 
+	public static final String LOG_VERSION = "log_version";
+
 	/**
 	 * 站点ID
 	 */
@@ -52,6 +54,11 @@ public class RASPConfigConstants {
 	 * 本地配置同步时间间隔（秒）
 	 */
 	public static final String SYNC_INTERVAL = "sync.interval";
+
+	/**
+	 * 设置日志刷新间隔时间（秒）
+	 */
+	public static final String FLUSH_INTERVAL = "flush.interval";
 
 	/**
 	 * 获取代理IP的请求头名称

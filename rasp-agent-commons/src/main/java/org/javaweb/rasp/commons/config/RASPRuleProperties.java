@@ -24,6 +24,8 @@ public class RASPRuleProperties extends RASPProperties {
 
 	private String webShellFeature;
 
+	private String webShellConfig;
+
 	private String expressionOgnl;
 
 	private String[] expressionOgnlExcludedPackageNames;
@@ -59,6 +61,7 @@ public class RASPRuleProperties extends RASPProperties {
 		this.fastjsonRegexp = configMap.getString(FASTJSON_REGEXP);
 		this.xstreamDisableClass = configMap.getArray(XSTREAM_DISABLE_CLASS);
 		this.webShellFeature = configMap.getString(WEBSHELL_FEATURE);
+		this.webShellConfig = configMap.getString(WEBSHELL_CONFIG);
 		this.expressionOgnl = configMap.getString(EXPRESSION_OGNL);
 		this.expressionOgnlExcludedPackageNames = configMap.getArray(EXPRESSION_OGNL_EXCLUDED_PACKAGE_NAMES);
 		this.expressionSpel = configMap.getString(EXPRESSION_SPEL);
@@ -110,6 +113,10 @@ public class RASPRuleProperties extends RASPProperties {
 
 	public String getWebShellFeature() {
 		return webShellFeature;
+	}
+
+	public String getWebShellConfig() {
+		return webShellConfig;
 	}
 
 	public String getExpressionOgnl() {

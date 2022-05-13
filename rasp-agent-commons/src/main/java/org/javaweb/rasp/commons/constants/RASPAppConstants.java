@@ -28,6 +28,11 @@ public class RASPAppConstants {
 	public static final String URL_BLACKLIST = "url.blacklist";
 
 	/**
+	 * 请求头白名单
+	 */
+	public static final String HEADER_WHITELIST = "header.whitelist";
+
+	/**
 	 * 白名单列表
 	 */
 	public static final String WHITELIST = "whitelist";

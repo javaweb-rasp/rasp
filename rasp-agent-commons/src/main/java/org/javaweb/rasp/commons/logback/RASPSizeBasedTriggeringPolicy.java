@@ -1,4 +1,4 @@
-package org.javaweb.rasp.commons.logger;
+package org.javaweb.rasp.commons.logback;
 
 import ch.qos.logback.core.rolling.TriggeringPolicyBase;
 import ch.qos.logback.core.util.DefaultInvocationGate;

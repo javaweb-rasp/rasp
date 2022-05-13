@@ -305,6 +305,8 @@ public class FileUtils {
 			} finally {
 				if (br != null) IOUtils.closeQuietly(br);
 			}
+		} else {
+			fileList.add(targetFile);
 		}
 
 		return fileList;
