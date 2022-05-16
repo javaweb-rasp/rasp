@@ -1,5 +1,6 @@
 package org.javaweb.rasp.commons.cache;
 
+import org.javaweb.rasp.commons.RASPSerialization;
 import org.javaweb.rasp.commons.context.RASPHttpRequestContext;
 
 import java.io.IOException;
@@ -7,9 +8,10 @@ import java.io.OutputStream;
 import java.rasp.proxy.loader.HookResult;
 
 import static java.rasp.proxy.loader.HookResultType.THROW;
-import static org.javaweb.rasp.commons.cache.RASPSerialization.serialization;
 
 public class RASPOutputStreamCache extends OutputStream {
+
+	private final RASPSerialization serialization;
 
 	private int cachedBufferSize = 0;
 
@@ -35,20 +37,28 @@ public class RASPOutputStreamCache extends OutputStream {
 
 	private final RASPByteArrayOutputStream cachedStream = new RASPByteArrayOutputStream();
 
-	public RASPOutputStreamCache(RASPHttpRequestContext context) {
+	/**
+	 * 创建RASP输出流缓存对象
+	 *
+	 * @param context       RASP上下文
+	 * @param serialization 缓存JSON/XML类型时必须传入RASPSerialization对象
+	 */
+	public RASPOutputStreamCache(RASPHttpRequestContext context, RASPSerialization serialization) {
 		this.context = context;
-
 		int contentLength = context.getContentLength();
 		int maxCacheSize  = context.getMaxStreamCacheSize();
 
-		// 非API请求必须限制缓存流字节数
-		if (!context.isWebApiRequest()) {
-			// 缓存字节数最大值那么必须大于0，小于100M
+		// 只有API请求时才需要反序列化
+		if (context.isWebApiRequest()) {
+			this.serialization = serialization;
+		} else {
+			this.serialization = null;
+
+			// 非API请求必须限制缓存流字节数，缓存字节数最大值那么必须大于0，小于100M
 			if (contentLength == -1 || contentLength > DEFAULT_MAX_SIZE) {
 				this.maxCacheSize = maxCacheSize;
 				return;
 			}
-
 		}
 
 		this.maxCacheSize = contentLength;
@@ -85,15 +95,15 @@ public class RASPOutputStreamCache extends OutputStream {
 	}
 
 	public void completed() throws IOException {
-		// 检测是否已反序列化，非API请求不需要反序列化
-		if (deserialized || !context.isWebApiRequest()) {
+		// 检测是否设置了反序列化实现类，是否已反序列化，非API请求不需要反序列化
+		if (serialization == null || deserialized || !context.isWebApiRequest()) {
 			return;
 		}
 
 		// 修改序列化状态为true
 		deserialized = true;
 
-		HookResult<?> result = serialization(context, getInputStream());
+		HookResult<?> result = serialization.deserialization(context, getInputStream());
 
 		// 检测到有攻击且非静默模式需要抛出异常阻断程序逻辑
 		if (result != null && result.getRASPHookResultType() == THROW && !context.isSilent()) {

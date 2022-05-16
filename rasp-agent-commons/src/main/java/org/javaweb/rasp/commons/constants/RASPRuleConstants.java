@@ -23,11 +23,6 @@ public class RASPRuleConstants {
 	public static final String FILESYSTEM_PROTECTED_SUFFIX = "filesystem.protected.suffix";
 
 	/**
-	 * SSRF协议规则
-	 */
-	public static final String SSRF_PROTOCOL_TYPES = "ssrf.protocol.types";
-
-	/**
 	 * SSRF黑名单域名列表
 	 */
 	public static final String SSRF_BLACK_DOMAIN = "ssrf.black.domain";

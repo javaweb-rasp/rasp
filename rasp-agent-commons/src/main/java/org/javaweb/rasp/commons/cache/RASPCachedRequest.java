@@ -123,8 +123,8 @@ public class RASPCachedRequest {
 		return cachedXML;
 	}
 
-	public void cacheRequestXMLData(RASPByteArrayInputStream in) {
-		this.cachedXML = new String(in.getBuf());
+	public void cacheRequestXMLData(String cachedXML) {
+		this.cachedXML = cachedXML;
 	}
 
 	/**

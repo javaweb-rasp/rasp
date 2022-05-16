@@ -131,7 +131,7 @@ public class RASPFileAppender<E> extends RASPOutputStreamAppender<E> {
 				// file should be opened only if collision free
 				try {
 					openFile(getFile());
-				} catch (IOException e) {
+				} catch (java.io.IOException e) {
 					errors++;
 					addError("openFile(" + fileName + "," + append + ") call failed.", e);
 				}

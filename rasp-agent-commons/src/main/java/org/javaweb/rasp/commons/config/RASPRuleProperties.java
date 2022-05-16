@@ -12,8 +12,6 @@ public class RASPRuleProperties extends RASPProperties {
 
 	private String[] filesystemProtectedSuffix;
 
-	private String[] ssrfProtocolTypes;
-
 	private String[] ssrfBlackDomain;
 
 	private String[] jsonDisableClass;
@@ -55,7 +53,6 @@ public class RASPRuleProperties extends RASPProperties {
 		this.filesystemReadRegexp = configMap.getArray(FILESYSTEM_READ_REGEXP);
 		this.filesystemWriteRegexp = configMap.getArray(FILESYSTEM_WRITE_REGEXP);
 		this.filesystemProtectedSuffix = configMap.getArray(FILESYSTEM_PROTECTED_SUFFIX);
-		this.ssrfProtocolTypes = configMap.getArray(SSRF_PROTOCOL_TYPES);
 		this.ssrfBlackDomain = configMap.getArray(SSRF_BLACK_DOMAIN);
 		this.jsonDisableClass = configMap.getArray(JSON_DISABLE_CLASS);
 		this.fastjsonRegexp = configMap.getString(FASTJSON_REGEXP);
@@ -89,10 +86,6 @@ public class RASPRuleProperties extends RASPProperties {
 
 	public String[] getFilesystemProtectedSuffix() {
 		return filesystemProtectedSuffix;
-	}
-
-	public String[] getSsrfProtocolTypes() {
-		return ssrfProtocolTypes;
 	}
 
 	public String[] getSsrfBlackDomain() {
