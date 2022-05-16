@@ -32,6 +32,22 @@ public class RASPByteArrayInputStream extends InputStream {
 		return buf;
 	}
 
+	public String getBufString() {
+		return new String(buf, pos, count);
+	}
+
+	public int getPos() {
+		return pos;
+	}
+
+	public int getMark() {
+		return mark;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
 	public boolean isClosed() {
 		return closed;
 	}
