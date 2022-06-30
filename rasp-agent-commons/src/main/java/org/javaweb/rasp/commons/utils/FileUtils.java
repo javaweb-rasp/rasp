@@ -6,7 +6,7 @@ import java.util.List;
 
 import static java.io.File.*;
 import static org.javaweb.rasp.commons.config.RASPConfiguration.RASP_DIRECTORY;
-import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
+import static org.javaweb.rasp.loader.AgentConstants.AGENT_NAME;
 
 public class FileUtils {
 

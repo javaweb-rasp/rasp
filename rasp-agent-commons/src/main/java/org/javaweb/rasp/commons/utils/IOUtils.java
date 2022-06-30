@@ -42,4 +42,18 @@ public class IOUtils {
 		return new String(toByteArray(in));
 	}
 
+	public static String toString(Reader reader) throws IOException {
+		if (reader == null) throw new IOException();
+
+		int          a;
+		char[]       chars = new char[1024];
+		StringWriter sw    = new StringWriter();
+
+		while ((a = reader.read(chars)) != -1) {
+			sw.write(chars, 0, a);
+		}
+
+		return sw.toString();
+	}
+
 }

@@ -75,4 +75,9 @@ public class RASPConfigConstants {
 	 */
 	public static final String VERSION = "version";
 
+	/**
+	 * 默认日志缓存大小
+	 */
+	public static final String LOG_BUFFER_SIZE = "log_buffer_size";
+
 }

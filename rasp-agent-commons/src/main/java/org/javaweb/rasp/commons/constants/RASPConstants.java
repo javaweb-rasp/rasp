@@ -9,11 +9,97 @@ import java.util.regex.Pattern;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.DOTALL;
 import static java.rasp.proxy.loader.HookResultType.RETURN;
+import static org.javaweb.rasp.loader.AgentConstants.AGENT_FILE_PREFIX_NAME;
 
 /**
  * RASP 全局常量定义
  */
 public class RASPConstants {
+
+	/**
+	 * 访问日志前缀
+	 */
+	public static final String ACCESS_LOGGER_PREFIX = "access_log_";
+
+	/**
+	 * 攻击日志前缀
+	 */
+	public static final String ATTACK_LOGGER_PREFIX = "attack_log_";
+
+	/**
+	 * 攻击追踪日志前缀
+	 */
+	public static final String TRACE_LOGGER_PREFIX = "trace_log_";
+
+	/**
+	 * 访问日志
+	 */
+	public static final String ACCESS_LOG = "access";
+
+	/**
+	 * 攻击日志
+	 */
+	public static final String ATTACK_LOG = "attack";
+
+	/**
+	 * 攻击追踪
+	 */
+	public static final String TRACE_LOG = "trace";
+
+	/**
+	 * RASP需要同步的日志类型
+	 */
+	public static final String[] SYNC_LOG_TYPES = new String[]{ACCESS_LOG, ATTACK_LOG, TRACE_LOG};
+
+	/**
+	 * 定义RASP 请求适配jar名称
+	 */
+	public static final String ADAPTER_FILE_NAME = AGENT_FILE_PREFIX_NAME + "-servlet.jar";
+
+	/**
+	 * RASP Runtime日志文件名
+	 */
+	public static final String AGENT_LOG_FILE_NAME = AGENT_FILE_PREFIX_NAME + "-agent.log";
+
+	/**
+	 * RASP 防御模块日志文件名
+	 */
+	public static final String MODULES_LOG_FILE_NAME = AGENT_FILE_PREFIX_NAME + "-modules.log";
+
+	/**
+	 * 攻击日志文件名
+	 */
+	public static final String ATTACK_LOG_FILE_NAME = AGENT_FILE_PREFIX_NAME + "-attack.log";
+
+	/**
+	 * 攻击追踪日志文件名
+	 */
+	public static final String TRACE_LOG_FILE_NAME = AGENT_FILE_PREFIX_NAME + "-trace.log";
+
+	/**
+	 * 访问日志文件名
+	 */
+	public static final String ACCESS_LOG_FILE_NAME = AGENT_FILE_PREFIX_NAME + "-access.log";
+
+	/**
+	 * 定义Agent Banner文件名称
+	 */
+	public static final String BANNER_FILE_NAME = "banner.txt";
+
+	/**
+	 * RASP 应用默认配置文件
+	 */
+	public static final String DEFAULT_AGENT_APP_FILE_NAME = "default-" + AGENT_FILE_PREFIX_NAME + "-app.properties";
+
+	/**
+	 * RASP核心配置文件名称
+	 */
+	public static final String AGENT_CONFIG_FILE_NAME = AGENT_FILE_PREFIX_NAME + ".properties";
+
+	/**
+	 * RASP 规则文件名称
+	 */
+	public static final String AGENT_RULES_FILE_NAME = AGENT_FILE_PREFIX_NAME + "-rules.properties";
 
 	/**
 	 * 指定ASM版本号：ASM 9
@@ -63,12 +149,17 @@ public class RASPConstants {
 	/**
 	 * RASP git配置文件名称
 	 */
-	public static final String GIT_FILE_NAME = "git.properties";
+	public static final String VERSION_FILE_NAME = "version.properties";
 
 	/**
-	 * API请求参数名
+	 * API请求参数名：__ConnectData__
 	 */
 	public static final String RASP_API_CONNECT_DATA = "__ConnectData__";
+
+	/**
+	 * API请求头：ApiHash
+	 */
+	public static final String RASP_API_HASH = "ApiHash";
 
 	/**
 	 * 字符串：javassist，因为maven配置了javassist关键字重定向，所以这里不能直接写"javassist"
@@ -91,11 +182,6 @@ public class RASPConstants {
 	 * 拒绝访问时的拦截页面文件名
 	 */
 	public static final String FORBIDDEN_FILE = "403.html";
-
-	/**
-	 * jsp
-	 */
-	public static final String JSP_SUFFIX = "jsp";
 
 	/**
 	 * JSON类型Content-Type

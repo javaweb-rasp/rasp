@@ -442,11 +442,23 @@ public final class URLUtils {
 		}
 
 		// ROOT的context是""，所以还原成ROOT
-		if (contextPath.charAt(0) != '/') {
-			contextPath = '/' + contextPath;
+		return appendFirstSlash(contextPath);
+	}
+
+	/**
+	 * 检测URL地址是否是以"/"开头，如果不是自动在第一个字符前面拼接"/"
+	 *
+	 * @param url URL地址
+	 * @return 拼接后的URL
+	 */
+	public static String appendFirstSlash(String url) {
+		if (url == null || url.length() < 1) return null;
+
+		if (url.charAt(0) != '/') {
+			url = '/' + url;
 		}
 
-		return contextPath;
+		return url;
 	}
 
 }

@@ -2,7 +2,7 @@ package org.javaweb.rasp.commons.config;
 
 import java.util.*;
 
-import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
+import static org.javaweb.rasp.loader.AgentConstants.AGENT_NAME;
 import static org.javaweb.rasp.commons.utils.StringUtils.*;
 
 public class RASPConfigMap<K, V> extends HashMap<K, V> {

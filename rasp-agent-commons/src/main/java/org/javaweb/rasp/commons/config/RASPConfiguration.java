@@ -9,9 +9,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.javaweb.rasp.commons.constants.RASPConstants.*;
 import static org.javaweb.rasp.commons.log.RASPLogger.createRASPLogger;
-import static org.javaweb.rasp.commons.constants.RASPConstants.FORBIDDEN_FILE;
-import static org.javaweb.rasp.commons.loader.AgentConstants.*;
+import static org.javaweb.rasp.commons.utils.StringUtils.*;
+import static org.javaweb.rasp.loader.AgentConstants.*;
 import static org.javaweb.rasp.commons.utils.FileUtils.copyFile;
 
 /**
@@ -167,7 +168,15 @@ public class RASPConfiguration {
 	 * @return Web应用配置文件对象
 	 */
 	public static RASPPropertiesConfiguration<RASPAppProperties> getWebApplicationConfig(RASPHttpRequestContext ctx) {
-		int hashCode = ctx.getContextPath().hashCode();
+		String contextPath = ctx.getContextPath();
+
+		// 处理contextPath为多级目录的情况，比如：/ibm/test/
+		if (countOf(contextPath, '/') > 1) {
+			// 替换/ibm/test/为/ibm_test/
+			contextPath = replaceFirstChar(contextPath.replace("/", "_"), '/');
+		}
+
+		int hashCode = contextPath.hashCode();
 
 		// 获取缓存中的Web应用配置
 		RASPPropertiesConfiguration<RASPAppProperties> config = APPLICATION_CONFIG_MAP.get(hashCode);
@@ -180,7 +189,7 @@ public class RASPConfiguration {
 		ctx.initAppLogger();
 
 		// 获取Web应用配置
-		return getWebApplicationConfig(ctx.getContextPath());
+		return getWebApplicationConfig(contextPath);
 	}
 
 	/**

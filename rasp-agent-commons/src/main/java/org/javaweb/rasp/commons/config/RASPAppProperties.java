@@ -7,7 +7,8 @@ import java.util.Set;
 import static org.javaweb.rasp.commons.constants.RASPAppConstants.*;
 import static org.javaweb.rasp.commons.utils.EncryptUtils.base64Decode;
 import static org.javaweb.rasp.commons.utils.JsonUtils.toJsonSetMap;
-import static org.javaweb.rasp.commons.utils.StringUtils.isNotEmpty;
+import static org.javaweb.rasp.commons.utils.URLUtils.appendFirstSlash;
+import static org.javaweb.rasp.commons.utils.URLUtils.urlNormalize;
 
 public class RASPAppProperties extends RASPProperties {
 
@@ -44,7 +45,7 @@ public class RASPAppProperties extends RASPProperties {
 	/**
 	 * 白名单列表
 	 */
-	private Set<Map<String, Object>> whitelist = new HashSet<Map<String, Object>>();
+	private String[] whitelist;
 
 	/**
 	 * 补丁列表
@@ -81,17 +82,31 @@ public class RASPAppProperties extends RASPProperties {
 		String whitelistStr = configMap.getString(WHITELIST);
 		String patchListStr = configMap.getString(PATCH_LIST);
 
-		this.whitelist.clear();
 		this.patchList.clear();
+		whitelist = new String[0];
 
 		// W10=表示[]，空
-		if (isNotEmpty(whitelistStr) && !"W10=".equals(whitelistStr)) {
-			this.whitelist = toJsonSetMap(base64Decode(whitelistStr));
+		if (whitelistStr != null && !"W10=".equals(whitelistStr)) {
+			Set<Map<String, Object>> setMap = toJsonSetMap(base64Decode(whitelistStr));
+
+			int index = 0;
+			whitelist = new String[setMap.size()];
+
+			// 白名单URL预处理（URL标准化）
+			for (Map<String, Object> map : setMap) {
+				String uri = appendFirstSlash(urlNormalize((String) map.get("request_uri")));
+				whitelist[index++] = uri != null ? uri.replaceAll("/$", "") : null;
+			}
 		}
 
 		// W10=表示[]，空
-		if (isNotEmpty(patchListStr) && !"W10=".equals(patchListStr)) {
+		if (patchListStr != null && !"W10=".equals(patchListStr)) {
 			this.patchList = toJsonSetMap(base64Decode(patchListStr));
+		}
+
+		// URL黑名单预处理（URL标准化）
+		for (int i = 0; i < urlBlacklist.length; i++) {
+			urlBlacklist[i] = appendFirstSlash(urlNormalize(urlBlacklist[i]));
 		}
 
 		this.servletStreamHook = configMap.getBoolean(SERVLET_STREAM_HOOK, false);
@@ -122,7 +137,7 @@ public class RASPAppProperties extends RASPProperties {
 		return headerWhitelist;
 	}
 
-	public Set<Map<String, Object>> getWhitelist() {
+	public String[] getWhitelist() {
 		return whitelist;
 	}
 

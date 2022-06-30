@@ -140,7 +140,6 @@ public class EncryptUtils {
 		} catch (Exception e) {
 			return null;
 		}
-
 	}
 
 }

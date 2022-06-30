@@ -98,13 +98,28 @@ public class RASPRuleConstants {
 	public static final String DISALLOWED_CMD_CLASS_NAME = "disallowed_cmd_class_name";
 
 	/**
-	 * 设置是否禁止在Agent启动后修改任何jsp/jspx类型的动态脚本文件
+	 * 配置是否禁止在Agent启动后修改任何jsp/jspx类型的动态脚本文件
 	 */
 	public static final String DISABLE_NEW_JSP = "disable_new_jsp";
 
 	/**
-	 * 设置禁止被DataBinder加载的field正则表达式
+	 * 配置禁止被DataBinder加载的field正则表达式
 	 */
 	public static final String DATA_BINDER_DISABLE_FIELD_REGEXP = "data_binder_disable_field_regexp";
+
+	/**
+	 * 配置disable_method模块的类方法黑名单
+	 */
+	public static final String DISABLE_METHOD_CLASSES = "disable_method_classes";
+
+	/**
+	 * 配置是否禁止使用反射调用native方法
+	 */
+	public static final String REFLECTION_DISABLED_NATIVE_METHOD = "reflection_disabled_native_method";
+
+	/**
+	 * 配置被禁止反射调用的类方法
+	 */
+	public static final String REFLECTION_DISABLED_METHODS = "reflection_disabled_methods";
 
 }

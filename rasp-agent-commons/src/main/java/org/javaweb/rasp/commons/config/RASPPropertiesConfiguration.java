@@ -38,6 +38,12 @@ public class RASPPropertiesConfiguration<T extends RASPProperties> {
 		return raspProperties;
 	}
 
+	public String getConfigName() {
+		String appConfigName = configFile.getName();
+
+		return appConfigName.substring(0, appConfigName.lastIndexOf("."));
+	}
+
 	/**
 	 * 修改配置文件属性
 	 *

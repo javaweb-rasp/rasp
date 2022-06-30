@@ -1,6 +1,10 @@
 package org.javaweb.rasp.commons.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.javaweb.rasp.commons.constants.RASPRuleConstants.*;
+import static org.javaweb.rasp.commons.utils.ReflectionUtils.getMethodHashcode;
 
 public class RASPRuleProperties extends RASPProperties {
 
@@ -46,6 +50,12 @@ public class RASPRuleProperties extends RASPProperties {
 
 	private String dataBinderDisableFieldRegexp;
 
+	private String[] disableMethodClasses;
+
+	private boolean reflectionDisabledNativeMethod;
+
+	private final List<Integer> reflectionDisabledMethods = new ArrayList<Integer>();
+
 	public void reloadConfig(RASPConfigMap<String, Object> configMap) {
 		super.reloadConfig(configMap);
 
@@ -70,6 +80,24 @@ public class RASPRuleProperties extends RASPProperties {
 		this.disallowedCmdClassName = configMap.getArray(DISALLOWED_CMD_CLASS_NAME);
 		this.disableNewJsp = configMap.getBoolean(DISABLE_NEW_JSP, false);
 		this.dataBinderDisableFieldRegexp = configMap.getString(DATA_BINDER_DISABLE_FIELD_REGEXP);
+		this.disableMethodClasses = configMap.getArray(DISABLE_METHOD_CLASSES);
+		this.reflectionDisabledNativeMethod = configMap.getBoolean(REFLECTION_DISABLED_NATIVE_METHOD, true);
+
+		initReflectionDisabledNativeMethod(configMap);
+	}
+
+	private void initReflectionDisabledNativeMethod(RASPConfigMap<String, Object> configMap) {
+		// 清空缓存数据
+		this.reflectionDisabledMethods.clear();
+
+		for (String str : configMap.getArray(REFLECTION_DISABLED_METHODS)) {
+			String[] strs       = str.split("#");
+			String   className  = strs[0].trim();
+			String   methodName = strs.length == 2 ? strs[1].trim() : null;
+
+			// 计算类方法hash
+			reflectionDisabledMethods.add(getMethodHashcode(className, methodName));
+		}
 	}
 
 	public String[] getUploadNotAllowedSuffix() {
@@ -154,6 +182,18 @@ public class RASPRuleProperties extends RASPProperties {
 
 	public String getDataBinderDisableFieldRegexp() {
 		return dataBinderDisableFieldRegexp;
+	}
+
+	public String[] getDisableMethodClasses() {
+		return disableMethodClasses;
+	}
+
+	public boolean isReflectionDisabledNativeMethod() {
+		return reflectionDisabledNativeMethod;
+	}
+
+	public List<Integer> getReflectionDisabledMethods() {
+		return reflectionDisabledMethods;
 	}
 
 }

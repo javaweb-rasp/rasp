@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.javaweb.rasp.commons.attack.RASPParameterPosition.PARAMETER_MAP;
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_LOGGER;
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_PROPERTIES;
-import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
+import static org.javaweb.rasp.loader.AgentConstants.AGENT_NAME;
 import static org.javaweb.rasp.commons.utils.ArrayUtils.addAll;
 import static org.javaweb.rasp.commons.utils.IPV4Utils.*;
 

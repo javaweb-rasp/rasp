@@ -169,13 +169,16 @@ public class ClassUtils {
 	 * @param classLoader 目标类加载器
 	 * @param res         Properties文件路径
 	 * @return Properties Map
-	 * @throws IOException 读取资源IO异常
 	 */
-	public static Map<String, String> getPropertiesMap(ClassLoader classLoader, String res) throws IOException {
-		Properties p = new Properties();
-		p.load(classLoader.getResourceAsStream(res));
+	public static Map<String, String> getPropertiesMap(ClassLoader classLoader, String res) {
+		try {
+			Properties p = new Properties();
+			p.load(classLoader.getResourceAsStream(res));
 
-		return propertiesToMap(p);
+			return propertiesToMap(p);
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 }

@@ -220,7 +220,7 @@ public class StringUtils {
 	 * @param delimiters the delimiter characters, assembled as a {@code String}
 	 *                   (each of the characters is individually considered as a delimiter)
 	 * @return an array of the tokens
-	 * @see StringTokenizer
+	 * @see java.util.StringTokenizer
 	 * @see String#trim()
 	 */
 	public static String[] tokenizeToStringArray(String str, String delimiters) {
@@ -243,7 +243,7 @@ public class StringUtils {
 	 *                          (only applies to tokens that are empty after trimming; StringTokenizer
 	 *                          will not consider subsequent delimiters as token in the first place).
 	 * @return an array of the tokens
-	 * @see StringTokenizer
+	 * @see java.util.StringTokenizer
 	 * @see String#trim()
 	 */
 	public static String[] tokenizeToStringArray(String str, String delimiters,
@@ -428,6 +428,10 @@ public class StringUtils {
 		return eq(str, prefix, true);
 	}
 
+	public static boolean eq(String str, String find) {
+		return eq(str, find, false);
+	}
+
 	/**
 	 * 字符串trim、忽略大小写比较
 	 *
@@ -470,6 +474,40 @@ public class StringUtils {
 
 	public static String genUUID() {
 		return UUID.randomUUID().toString().replace("-", "");
+	}
+
+	/**
+	 * 统计字符串包含某个char字符的个数
+	 *
+	 * @param str 字符串
+	 * @param chr char
+	 * @return char出现次数
+	 */
+	public static int countOf(String str, char chr) {
+		if (str == null) return -1;
+
+		int count = 0;
+
+		for (int i = 0; i < str.length(); i++) {
+			if (str.charAt(i) == chr) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	/**
+	 * 替换字符串的第一个字符，如：ABc替换成aBc
+	 *
+	 * @param str 字符串
+	 * @param chr 替换后的首字母
+	 * @return 替换后的新字符串
+	 */
+	public static String replaceFirstChar(String str, char chr) {
+		if (str == null) return null;
+
+		return chr + str.substring(1);
 	}
 
 }

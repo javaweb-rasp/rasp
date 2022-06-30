@@ -53,14 +53,16 @@ public class HookResult<T> {
 	/**
 	 * 创建Hook处理结果对象
 	 *
-	 * @param handlerType Hook处理类型
-	 * @param exception   异常
-	 * @param returnValue 返回值
+	 * @param handlerType  Hook处理类型
+	 * @param exception    异常
+	 * @param returnValue  返回值
+	 * @param forceReplace 是否强制替换
 	 */
-	public HookResult(HookResultType handlerType, RASPHookException exception, T returnValue) {
+	public HookResult(HookResultType handlerType, RASPHookException exception, T returnValue, boolean forceReplace) {
 		this.hookResultType = handlerType;
 		this.exception = exception;
 		this.returnValue = returnValue;
+		this.forceReplace = forceReplace;
 	}
 
 	public HookResultType getRASPHookResultType() {

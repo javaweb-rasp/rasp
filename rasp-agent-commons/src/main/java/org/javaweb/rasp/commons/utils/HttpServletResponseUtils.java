@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.rasp.proxy.loader.RASPModuleType;
 
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_LOGGER;
-import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
+import static org.javaweb.rasp.loader.AgentConstants.AGENT_NAME;
 import static org.javaweb.rasp.commons.utils.HttpServletRequestUtils.htmlSpecialChars;
 import static org.javaweb.rasp.commons.utils.StringUtils.isNotEmpty;
 

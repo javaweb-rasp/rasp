@@ -98,9 +98,19 @@ public abstract class RASPHttpRequestContext implements Closeable {
 	protected final String servletPath;
 
 	/**
+	 * 请求URI路径
+	 */
+	protected final String requestURI;
+
+	/**
 	 * Web应用Context名称
 	 */
 	protected final String contextPath;
+
+	/**
+	 * Web应用Context名称，自动替换"/"为"_"，如："/console/ibm/"返回"console_ibm"
+	 */
+	protected String contextName;
 
 	/**
 	 * 客户端IP
@@ -135,6 +145,7 @@ public abstract class RASPHttpRequestContext implements Closeable {
 		this.cachedRequest = new RASPCachedRequest(this);
 		this.adapterClassLoader = adapterClassLoader;
 		this.servletPath = request.getServletPath();
+		this.requestURI = request.getRequestURI();
 		this.userAgent = request.getHeader("User-Agent");
 		this.contextPath = getStandardContextPath(request.getContextPath());
 
@@ -244,12 +255,32 @@ public abstract class RASPHttpRequestContext implements Closeable {
 	}
 
 	/**
+	 * 获取requestURI
+	 */
+	public String getRequestURI() {
+		return requestURI;
+	}
+
+	/**
 	 * 获取应用的Context名称
 	 *
 	 * @return Context名称
 	 */
 	public String getContextPath() {
 		return contextPath;
+	}
+
+	/**
+	 * 获取应用的Context名称，自动替换"/"为"_"，如："/console/ibm/"返回"console_ibm"
+	 *
+	 * @return Context名称
+	 */
+	public String getContextName() {
+		if (contextName == null && contextPath != null) {
+			this.contextName = contextPath.substring(1).replace("/", "_");
+		}
+
+		return contextName;
 	}
 
 	/**
@@ -351,7 +382,12 @@ public abstract class RASPHttpRequestContext implements Closeable {
 
 		// 初始化共计日志
 		initAttackLogger();
+
+		// 初始化攻击追踪日志
+		initTraceLogger();
 	}
+
+	public abstract Logger initTraceLogger();
 
 	/**
 	 * 返回是否是Web API请求

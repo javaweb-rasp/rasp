@@ -3,7 +3,7 @@ package org.javaweb.rasp.commons.context;
 import java.io.IOException;
 
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_LOGGER;
-import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
+import static org.javaweb.rasp.loader.AgentConstants.AGENT_NAME;
 
 public abstract class RASPHttpRequestContextManager {
 
@@ -46,7 +46,7 @@ public abstract class RASPHttpRequestContextManager {
 		try {
 			context.close();
 		} catch (IOException e) {
-			AGENT_LOGGER.info("{}关闭RASP上下文时异常：" + e, AGENT_NAME);
+			AGENT_LOGGER.error("{}关闭RASP上下文时异常：" + e, AGENT_NAME);
 		}
 	}
 

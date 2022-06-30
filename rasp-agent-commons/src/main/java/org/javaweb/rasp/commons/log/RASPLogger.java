@@ -8,7 +8,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.util.FileSize;
 import org.javaweb.rasp.commons.config.RASPConfiguration;
-import org.javaweb.rasp.commons.loader.AgentConstants;
+import org.javaweb.rasp.loader.AgentConstants;
 import org.javaweb.rasp.commons.logback.RASPFileAppender;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static java.lang.Long.MAX_VALUE;
+import static org.javaweb.rasp.commons.constants.RASPConstants.*;
 
 public class RASPLogger {
 
@@ -37,7 +38,18 @@ public class RASPLogger {
 
 		RASPFileAppender<ILoggingEvent> fileAppender = new RASPFileAppender<ILoggingEvent>();
 		fileAppender.setEncoder(layout);
-		fileAppender.setFileSize(fileSize != null ? FileSize.valueOf(fileSize).getSize() : MAX_VALUE);
+
+		if (fileSize != null) {
+			try {
+				FileSize size = FileSize.valueOf(fileSize);
+				fileAppender.setFileSize(size.getSize());
+			} catch (IllegalArgumentException e) {
+				fileAppender.setFileSize(MAX_VALUE);
+			}
+		} else {
+			fileAppender.setFileSize(MAX_VALUE);
+		}
+
 		fileAppender.setFile(file.toString());
 		fileAppender.setContext(LOGGER_CONTEXT);
 		fileAppender.start();
@@ -112,6 +124,26 @@ public class RASPLogger {
 
 	public static String getLoggerName(String prefix, String name) {
 		return prefix + name.hashCode();
+	}
+
+	public static String getLoggerFileName(String logType) {
+		if (ATTACK_LOG.equals(logType)) {
+			return ATTACK_LOG_FILE_NAME;
+		} else if (TRACE_LOG.equals(logType)) {
+			return TRACE_LOG_FILE_NAME;
+		}
+
+		return ACCESS_LOG_FILE_NAME;
+	}
+
+	public static String getLoggerPrefix(String logType) {
+		if (ATTACK_LOG.equals(logType)) {
+			return ATTACK_LOGGER_PREFIX;
+		} else if (TRACE_LOG.equals(logType)) {
+			return TRACE_LOGGER_PREFIX;
+		}
+
+		return ACCESS_LOGGER_PREFIX;
 	}
 
 }

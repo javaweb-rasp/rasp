@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_LOGGER;
 import static org.javaweb.rasp.commons.constants.RASPConstants.DEFAULT_STRING_ARRAY_RESULT;
-import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
+import static org.javaweb.rasp.loader.AgentConstants.AGENT_NAME;
 import static java.rasp.proxy.loader.HookResultType.RETURN;
 
 public class RASPParameterSet<E> extends HashSet<E> {

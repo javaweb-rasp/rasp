@@ -3,13 +3,11 @@ package org.javaweb.rasp.commons.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.javaweb.rasp.commons.config.RASPConfiguration.AGENT_LOGGER;
-import static org.javaweb.rasp.commons.loader.AgentConstants.AGENT_NAME;
+import static org.javaweb.rasp.loader.AgentConstants.AGENT_NAME;
 
 public final class ReflectionUtils {
 
@@ -31,45 +29,111 @@ public final class ReflectionUtils {
 
 	public static final Class<?>[] STREAM_CLASS_ARG = new Class[]{byte[].class, int.class, int.class};
 
-	private static final Map<Integer, Map<String, Method>> CACHE_CLASS_METHOD_MAP =
-			new ConcurrentHashMap<Integer, Map<String, Method>>();
+	private static final Map<Integer, Method> CACHE_CLASS_METHOD_MAP = new ConcurrentHashMap<Integer, Method>();
 
-	private static final Map<Integer, Map<String, Field>> CACHE_CLASS_FIELD_MAP =
-			new ConcurrentHashMap<Integer, Map<String, Field>>();
+	private static final Map<Integer, Field> CACHE_CLASS_FIELD_MAP = new ConcurrentHashMap<Integer, Field>();
 
-	private static String getMethodDescriptor(String method, Class<?>... classes) {
-		return method + Arrays.toString(classes);
+	public static String methodToString(String method, Class<?>... classes) {
+		return methodToString(null, method, classes);
+	}
+
+	public static String methodToString(String className, String method, Class<?>... classes) {
+		StringBuilder sb = new StringBuilder();
+
+		if (className != null) {
+			sb.append(className).append(".");
+		}
+
+		return sb.append(method).append(methodToString(classes)).toString();
+	}
+
+	public static String methodToString(Class<?>... classes) {
+		StringBuilder sb = new StringBuilder("(");
+
+		for (int i = 0; i < classes.length; i++) {
+			sb.append(classes[i]);
+
+			if (i < classes.length - 1) {
+				sb.append(",");
+			}
+		}
+
+		return sb.append(')').toString();
+	}
+
+	public static int getMethodHashcode(Object className, String method) {
+		int hashcode = 0;
+
+		if (className != null) {
+			hashcode = className.hashCode();
+		}
+
+		if (method != null) {
+			hashcode += method.hashCode();
+		}
+
+		return hashcode;
+	}
+
+	public static int getMethodHashcode(Object className, String method, Class<?>... typeClasses) {
+		int hashcode = getMethodHashcode(className, method);
+
+		for (Class<?> clazz : typeClasses) {
+			hashcode += clazz.getName().hashCode();
+		}
+
+		return hashcode;
+	}
+
+	public static int getMethodHashcode(Object className, String method, String... typeClasses) {
+		int hashcode = getMethodHashcode(className, method);
+
+		for (String classname : typeClasses) {
+			hashcode += classname.hashCode();
+		}
+
+		return hashcode;
+	}
+
+	public static int getFieldHashcode(Object className, String field) {
+		int hashcode = 0;
+
+		if (className != null) {
+			hashcode = className.hashCode();
+		}
+
+		if (field != null) {
+			hashcode += field.hashCode();
+		}
+
+		return hashcode;
 	}
 
 	public static Method getMethod(Class<?> clazz, String name, Class<?>... argTypes) throws NoSuchMethodException {
-		int                 hashCode   = System.identityHashCode(clazz);
-		Map<String, Method> methodMap  = CACHE_CLASS_METHOD_MAP.get(hashCode);
-		String              methodDesc = getMethodDescriptor(name, argTypes);
+		int    hashCode = getMethodHashcode(clazz, name, argTypes);
+		Method method   = CACHE_CLASS_METHOD_MAP.get(hashCode);
 
-		if (methodMap != null) {
-			Method method = methodMap.get(methodDesc);
+		if (method != null) {
+			return method;
+		}
 
-			if (method != null) {
-				return methodMap.get(methodDesc);
+		while (clazz != Object.class) {
+			try {
+				method = clazz.getDeclaredMethod(name, argTypes);
+				break;
+			} catch (NoSuchMethodException e) {
+				clazz = clazz.getSuperclass();
 			}
+		}
+
+		if (method == null) {
+			throw new NoSuchMethodException(name);
 		} else {
-			methodMap = new HashMap<String, Method>();
+			method.setAccessible(true);
+
+			// 缓存类方法
+			CACHE_CLASS_METHOD_MAP.put(hashCode, method);
 		}
-
-		Method method;
-
-		try {
-			method = clazz.getMethod(name, argTypes);
-		} catch (NoSuchMethodException e) {
-			method = clazz.getDeclaredMethod(name, argTypes);
-		}
-
-		method.setAccessible(true);
-
-		methodMap.put(methodDesc, method);
-
-		// 缓存类方法
-		CACHE_CLASS_METHOD_MAP.put(hashCode, methodMap);
 
 		return method;
 	}
@@ -91,33 +155,30 @@ public final class ReflectionUtils {
 	}
 
 	public static Field getField(Class<?> clazz, String name) throws NoSuchFieldException {
-		int                hashCode = System.identityHashCode(clazz);
-		Map<String, Field> fieldMap = CACHE_CLASS_FIELD_MAP.get(hashCode);
+		int   hashCode = getFieldHashcode(clazz, name);
+		Field field    = CACHE_CLASS_FIELD_MAP.get(hashCode);
 
-		if (fieldMap != null) {
-			Field method = fieldMap.get(name);
+		if (field != null) {
+			return field;
+		}
 
-			if (method != null) {
-				return fieldMap.get(name);
+		while (clazz != Object.class) {
+			try {
+				field = clazz.getDeclaredField(name);
+				break;
+			} catch (NoSuchFieldException e) {
+				clazz = clazz.getSuperclass();
 			}
+		}
+
+		if (field == null) {
+			throw new NoSuchFieldException(name);
 		} else {
-			fieldMap = new HashMap<String, Field>();
+			field.setAccessible(true);
+
+			// 缓存类方法
+			CACHE_CLASS_FIELD_MAP.put(hashCode, field);
 		}
-
-		Field field;
-
-		try {
-			field = clazz.getField(name);
-		} catch (NoSuchFieldException e) {
-			field = clazz.getDeclaredField(name);
-		}
-
-		field.setAccessible(true);
-
-		fieldMap.put(name, field);
-
-		// 缓存类方法
-		CACHE_CLASS_FIELD_MAP.put(hashCode, fieldMap);
 
 		return field;
 	}

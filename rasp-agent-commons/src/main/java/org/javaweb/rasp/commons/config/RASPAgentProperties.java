@@ -1,5 +1,9 @@
 package org.javaweb.rasp.commons.config;
 
+import ch.qos.logback.core.util.FileSize;
+
+import java.util.concurrent.TimeUnit;
+
 import static org.javaweb.rasp.commons.constants.RASPConfigConstants.*;
 import static org.javaweb.rasp.commons.constants.RASPConstants.DEFAULT_PROTECTED_PACKAGE_REGEXP;
 import static org.javaweb.rasp.commons.constants.RASPConstants.JAVASSIST;
@@ -34,6 +38,15 @@ public class RASPAgentProperties extends RASPProperties {
 
 	private String version;
 
+	private String logBufferSize;
+
+	private static final String DEFAULT_BUFFER_SIZE = "10MB";
+
+	/**
+	 * 最大间隔时间：1天
+	 */
+	private static final long MAX_TIME_INTERVAL = TimeUnit.HOURS.toSeconds(1);
+
 	@Override
 	public void reloadConfig(RASPConfigMap<String, Object> configMap) {
 		super.reloadConfig(configMap);
@@ -53,9 +66,28 @@ public class RASPAgentProperties extends RASPProperties {
 		this.bytecodeEditor = configMap.getString(BYTECODE_EDITOR, JAVASSIST);
 		this.syncInterval = configMap.getInt(SYNC_INTERVAL, 30);
 		this.flushInterval = configMap.getInt(FLUSH_INTERVAL, 3);
+
+		// 设置云端同步时间间隔范围
+		if (syncInterval < 1 || syncInterval > MAX_TIME_INTERVAL) {
+			syncInterval = 30;
+		}
+
+		// 设置日志刷新时间间隔范围
+		if (flushInterval < 1 || flushInterval > MAX_TIME_INTERVAL) {
+			flushInterval = 3;
+		}
+
 		this.proxyIpHeader = configMap.getString(PROXY_IP_HEADER, "x-forwarded-for");
 		this.logLevel = configMap.getString(LOG_LEVEL);
 		this.version = configMap.getString(VERSION);
+		this.logBufferSize = configMap.getString(LOG_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
+
+		try {
+			// 检测缓存日志大小设置是否正确
+			FileSize.valueOf(logBufferSize);
+		} catch (IllegalArgumentException e) {
+			this.logBufferSize = DEFAULT_BUFFER_SIZE;
+		}
 	}
 
 	public String getLogVersion() {
@@ -112,6 +144,10 @@ public class RASPAgentProperties extends RASPProperties {
 
 	public String getVersion() {
 		return version;
+	}
+
+	public String getLogBufferSize() {
+		return logBufferSize;
 	}
 
 }
