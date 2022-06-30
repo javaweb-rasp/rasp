@@ -6,7 +6,7 @@
 <dependency>
     <groupId>org.javaweb.rasp</groupId>
     <artifactId>rasp-agent-commons</artifactId>
-    <version>3.0.3.3</version>
+    <version>3.0.3.4</version>
     <scope>provided</scope>
 </dependency>
 ```

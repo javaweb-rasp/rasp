@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.javaweb.rasp</groupId>
     <artifactId>javaweb-rasp</artifactId>
-    <version>3.0.3.3</version>
+    <version>3.0.3.4</version>
     <packaging>pom</packaging>
     <url>https://github.com/javasec/javaweb</url>
     <name>javaweb</name>
